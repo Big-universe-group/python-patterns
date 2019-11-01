@@ -4,6 +4,12 @@
 """
 http://code.activestate.com/recipes/413838-memento-closure/
 
+行为模式--备忘录模式
+
+备忘录模式: 保存一个对象的状态, 以便在适当的时候恢复对象状态.
+意图: 在不破坏封装性的前提下，捕获一个对象的内部状态，并在该对象之外保存这个状态
+应用场景: 后悔药, 打游戏时的存档, 后退操作, 数据库事务管理. 保存和恢复操作, 回滚操作.
+
 *TL;DR
 Provides the ability to restore an object to its previous state.
 """
@@ -13,6 +19,7 @@ from copy import deepcopy
 
 
 def memento(obj, deep=False):
+    """ 使用到闭包语法, 保存obj状态到state中 """
     state = deepcopy(obj.__dict__) if deep else copy(obj.__dict__)
 
     def restore():
@@ -23,9 +30,9 @@ def memento(obj, deep=False):
 
 
 class Transaction(object):
-    """A transaction guard.
+    """A transaction guard(守卫, 警备).
 
-    This is, in fact, just syntactic sugar around a memento closure.
+    This is, in fact, just syntactic sugar(语法糖) around a memento closure.
     """
 
     deep = False
@@ -37,9 +44,11 @@ class Transaction(object):
         self.commit()
 
     def commit(self):
+        """ 提交并保存状态 """
         self.states = [memento(target, self.deep) for target in self.targets]
 
     def rollback(self):
+        """ 回滚 """
         for a_state in self.states:
             a_state()
 
@@ -48,14 +57,21 @@ class Transactional(object):
     """Adds transactional semantics to methods. Methods decorated  with
 
     @Transactional will rollback to entry-state upon exceptions.
+    往方法中添加事务语义, 一旦方法调用发生异常, 自动回滚
     """
 
     def __init__(self, method):
+        """ 作为装饰器, 传入类方法 """
         self.method = method
 
     def __get__(self, obj, T):
+        """ 调用do_suff方法, 实际上会调用该描述符方法
+        obj: 对象, 即装饰器所在的类实例对象(self)
+        T: 对象类型(装饰器所在类实例对象类型)
+        """
         def transaction(*args, **kwargs):
-            state = memento(obj)
+            print('装饰描述符方法')
+            state = memento(obj)  # obj就是NumObj对象
             try:
                 return self.method(obj, *args, **kwargs)
             except Exception as e:
@@ -66,6 +82,7 @@ class Transactional(object):
 
 
 class NumObj(object):
+    """ 真正的业务对象, 需要对该业务对象进行状态保存, 状态回滚等操作 """
     def __init__(self, value):
         self.value = value
 
@@ -75,6 +92,7 @@ class NumObj(object):
     def increment(self):
         self.value += 1
 
+    # 将类方法传入Transactional对象中
     @Transactional
     def do_stuff(self):
         self.value = '1111'  # <- invalid value
@@ -125,6 +143,7 @@ def main():
     ...    import sys
     ...    import traceback
     ...    traceback.print_exc(file=sys.stdout)
+    装饰描述符方法
     -> doing stuff failed!
     Traceback (most recent call last):
     ...

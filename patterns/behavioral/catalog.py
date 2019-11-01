@@ -4,6 +4,8 @@
 """
 A class that uses different static function depending of a parameter passed in
 init. Note the use of a single dictionary instead of multiple conditions
+模式: 根据__init__中的不同参数来决定调用不同的classmethod方法
+行为模式: 目录
 """
 
 __author__ = "Ibrahim Diop <ibrahim@sikilabs.com>"
@@ -20,7 +22,10 @@ class Catalog(object):
         # dictionary that will be used to determine which static method is
         # to be executed but that will be also used to store possible param
         # value
-        self._static_method_choices = {'param_value_1': self._static_method_1, 'param_value_2': self._static_method_2}
+        self._static_method_choices = {
+            'param_value_1': self._static_method_1,
+            'param_value_2': self._static_method_2
+        }
 
         # simple test to validate param value
         if param in self._static_method_choices.keys():
@@ -146,6 +151,8 @@ class CatalogStatic(object):
 
 def main():
     """
+    >>> print('输出, 需要在下面给出预计输出字符串')
+    输出, 需要在下面给出预计输出字符串
     >>> test = Catalog('param_value_2')
     >>> test.main_method()
     executed method 2!

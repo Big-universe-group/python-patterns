@@ -3,11 +3,28 @@
 
 """
 *TL;DR
-Encapsulates all information needed to perform an action or trigger an event.
+Encapsulates(封装) all information needed to perform an action(执行动作) or trigger an event(触发事件).
+
+行为模式--命令行模式
+命令行模式: 请求以命令的形式包含在对象中, 并传给对象, 调用对象会寻找可以处理该命令的相应对象并执行命令
+意图: 将一个请求封装成一个对象，从而使您可以用不同的请求对客户进行参数化
+使用场景:
+    比如要对行为进行"记录、撤销/重做、事务"等处理, 此时需要将"行为请求者"与"行为实现者"解耦.
+    received: 命令真正执行者
+    command: 作为命令本身
+    invoker: 使用命令对象的入口, 请求本身作为一个对象
+
+    调用者知道各种命令的执行者集群; 但是为了降低耦合度, 调用方仅仅调用invoker, 通过command本身来将
+    命令传给received进行处理.
+
+命令模式的关键: 引入抽象命令接口, 发送者针对抽象命令接口编程
 
 *Examples in Python ecosystem:
 Django HttpRequest (without `execute` method):
  https://docs.djangoproject.com/en/2.1/ref/request-response/#httprequest-objects
+
+例如django将所有请求行为抽象为HttpRequest, 之后利用request来获取行为或者进行其他操作.
+例如django将所有响应行为抽象为HttpResponse, 利用response获取各类结果
 """
 
 from __future__ import print_function
@@ -15,14 +32,20 @@ import os
 
 
 class MoveFileCommand(object):
+    """
+    功能: 移动文件
+    行为实现者: execute, undo, 自动寻找适合该命令的操作对象并执行动作
+    """
     def __init__(self, src, dest):
         self.src = src
         self.dest = dest
 
     def execute(self):
+        """ 执行 """
         self.rename(self.src, self.dest)
 
     def undo(self):
+        """ 撤销 """
         self.rename(self.dest, self.src)
 
     def rename(self, src, dest):

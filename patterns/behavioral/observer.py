@@ -7,6 +7,13 @@ http://code.activestate.com/recipes/131499-observer-pattern/
 *TL;DR
 Maintains a list of dependents and notifies them of any state changes.
 
+行为模式--观察者模式(理解观察者这个意思, 敌不动我不动)
+观察者模式: 当对象之间存在一对多关系时, 一个对象被修改时, 自动的通知它的依赖对象.
+主要解决: 一个对象状态改变给其他对象通知的问题，而且要考虑到易用和低耦合，保证高度的协作
+应用场景:
+    拍卖的时候，拍卖师观察最高标价，然后通知给其他竞价者竞价; 使用观察者模式创建一种链式触发机制
+    抽象模型有两个方面，一个方面依赖于另一个方面。将这些方面封装在独立的对象中使它们可以各自独立地改变和复用
+
 *Examples in Python ecosystem:
 Django Signals: https://docs.djangoproject.com/en/2.1/topics/signals/
 Flask Signals: http://flask.pocoo.org/docs/1.0/signals/
@@ -16,14 +23,17 @@ from __future__ import print_function
 
 
 class Subject(object):
+    """ 观察者管理对象 """
     def __init__(self):
         self._observers = []
 
     def attach(self, observer):
+        """ 放入待观察链中 """
         if observer not in self._observers:
             self._observers.append(observer)
 
     def detach(self, observer):
+        """ 从待观察链中删除 """
         try:
             self._observers.remove(observer)
         except ValueError:
@@ -37,18 +47,22 @@ class Subject(object):
 
 # Example usage
 class Data(Subject):
+    """ 观察者(观察者管理对象子类) """
     def __init__(self, name=''):
         Subject.__init__(self)
         self.name = name
         self._data = 0
 
+    # 利用装饰器property来进行属性访问(__get__)
     @property
     def data(self):
         return self._data
 
+    # __set__, 每一次设置都会通知
     @data.setter
     def data(self, value):
         self._data = value
+        # 一般都是被依赖对象发起通知消息
         self.notify()
 
 
