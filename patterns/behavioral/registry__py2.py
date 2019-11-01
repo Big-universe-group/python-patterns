@@ -11,7 +11,7 @@
 
 class RegistryHolder(type):
 
-    REGISTRY = {}
+    REGISTRY = {}  # 注册表(全局唯一性对象)
 
     def __new__(cls, name, bases, attrs):
         new_cls = type.__new__(cls, name, bases, attrs)
@@ -32,7 +32,10 @@ class BaseRegisteredClass(object):
     Any class that will inherits from BaseRegisteredClass will be included
     inside the dict RegistryHolder.REGISTRY, the key being the name of the
     class and the associated value, the class itself.
+    相当于注册方法基类
     """
+    # __metaclass__使用元类创建对象, 每一次实例化类对象时都会自动调用RegistryHolder中的
+    # __new__方法.
     __metaclass__ = RegistryHolder
 
 
