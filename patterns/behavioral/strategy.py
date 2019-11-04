@@ -6,6 +6,8 @@
 Define a family of algorithms, encapsulate each one, and make them interchangeable.
 Strategy lets the algorithm vary independently from clients that use it.
 
+行为模式--策略模式
+
 *TL;DR
 Enables selecting an algorithm at runtime.
 """

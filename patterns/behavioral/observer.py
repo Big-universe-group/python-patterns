@@ -14,6 +14,10 @@ Maintains a list of dependents and notifies them of any state changes.
     拍卖的时候，拍卖师观察最高标价，然后通知给其他竞价者竞价; 使用观察者模式创建一种链式触发机制
     抽象模型有两个方面，一个方面依赖于另一个方面。将这些方面封装在独立的对象中使它们可以各自独立地改变和复用
 
+注意观察者同链式方法调用/责任链回调的区别, 虽然观察者的通知方式也是通过队列或者链式来完成.
+
+注意观察者模式相比发布订阅模式区别,
+
 *Examples in Python ecosystem:
 Django Signals: https://docs.djangoproject.com/en/2.1/topics/signals/
 Flask Signals: http://flask.pocoo.org/docs/1.0/signals/
@@ -23,23 +27,27 @@ from __future__ import print_function
 
 
 class Subject(object):
-    """ 观察者管理对象 """
+    """ 被观察者, 其保存所有监听本人的观察者集合 """
     def __init__(self):
+        # 相当于一个链式, 保存中各个观察者(猎人公会注册名单, 11 月枪毙名单)
         self._observers = []
 
     def attach(self, observer):
         """ 放入待观察链中 """
+        # 有点类似发布订阅模式, 但是相比发布订阅更加低耦合, 只有需要观察的时候才会注册
         if observer not in self._observers:
             self._observers.append(observer)
 
     def detach(self, observer):
         """ 从待观察链中删除 """
+        # 注销账号
         try:
             self._observers.remove(observer)
         except ValueError:
             pass
 
     def notify(self, modifier=None):
+        # 向所有会员发放福利
         for observer in self._observers:
             if modifier != observer:
                 observer.update(self)
@@ -47,7 +55,6 @@ class Subject(object):
 
 # Example usage
 class Data(Subject):
-    """ 观察者(观察者管理对象子类) """
     def __init__(self, name=''):
         Subject.__init__(self)
         self.name = name
@@ -67,11 +74,13 @@ class Data(Subject):
 
 
 class HexViewer:
+    """ 观察者 1 """
     def update(self, subject):
         print(u'HexViewer: Subject %s has data 0x%x' % (subject.name, subject.data))
 
 
 class DecimalViewer:
+    """ 观察者 2 """
     def update(self, subject):
         print(u'DecimalViewer: Subject %s has data %d' % (subject.name, subject.data))
 
@@ -83,6 +92,7 @@ def main():
     >>> data2 = Data('Data 2')
     >>> view1 = DecimalViewer()
     >>> view2 = HexViewer()
+    # 主动添加观察者
     >>> data1.attach(view1)
     >>> data1.attach(view2)
     >>> data2.attach(view2)

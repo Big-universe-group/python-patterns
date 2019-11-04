@@ -7,7 +7,7 @@ Encapsulates(封装) all information needed to perform an action(执行动作) o
 
 行为模式--命令行模式
 命令行模式: 请求以命令的形式包含在对象中, 并传给对象, 调用对象会寻找可以处理该命令的相应对象并执行命令
-意图: 将一个请求封装成一个对象，从而使您可以用不同的请求对客户进行参数化
+意图: 将一个请求封装成一个对象，从而使您可以用不同的请求对客户进行参数化, 一定程度上解决if..else问题
 使用场景:
     比如要对行为进行"记录、撤销/重做、事务"等处理, 此时需要将"行为请求者"与"行为实现者"解耦.
     received: 命令真正执行者
@@ -23,7 +23,7 @@ Encapsulates(封装) all information needed to perform an action(执行动作) o
 Django HttpRequest (without `execute` method):
  https://docs.djangoproject.com/en/2.1/ref/request-response/#httprequest-objects
 
-例如django将所有请求行为抽象为HttpRequest, 之后利用request来获取行为或者进行其他操作.
+例如django将所有请求行为抽象为HttpRequest(命令接口), 之后利用request来获取行为或者进行其他操作.
 例如django将所有响应行为抽象为HttpResponse, 利用response获取各类结果
 """
 
@@ -57,6 +57,7 @@ def main():
     """
     >>> from os.path import lexists
 
+    # 命令集群(invoker)
     >>> command_stack = [
     ...     MoveFileCommand('foo.txt', 'bar.txt'),
     ...     MoveFileCommand('bar.txt', 'baz.txt')

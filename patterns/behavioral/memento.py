@@ -20,11 +20,12 @@ from copy import deepcopy
 
 def memento(obj, deep=False):
     """ 使用到闭包语法, 保存obj状态到state中 """
+    # state存储obj的老状态或者数据
     state = deepcopy(obj.__dict__) if deep else copy(obj.__dict__)
 
     def restore():
-        obj.__dict__.clear()
-        obj.__dict__.update(state)
+        obj.__dict__.clear()  # 置空新数据
+        obj.__dict__.update(state)  # 恢复老数据
 
     return restore
 
@@ -48,7 +49,7 @@ class Transaction(object):
         self.states = [memento(target, self.deep) for target in self.targets]
 
     def rollback(self):
-        """ 回滚 """
+        """ 回滚并恢复老状态 """
         for a_state in self.states:
             a_state()
 
@@ -61,7 +62,10 @@ class Transactional(object):
     """
 
     def __init__(self, method):
-        """ 作为装饰器, 传入类方法 """
+        """
+        原理: 作为装饰器, 传入类方法
+        @功能: 一旦调用method方法, 就会自动触发__get__, 返回一个封装过的可以保存老状态的方法
+        """
         self.method = method
 
     def __get__(self, obj, T):

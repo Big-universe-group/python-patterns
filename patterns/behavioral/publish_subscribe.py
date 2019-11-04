@@ -12,6 +12,7 @@ Author: https://github.com/HanWenfang
 
 
 class Provider:
+    """ 内容生产者, 通过代理publisher和subscriber联系 """
     def __init__(self):
         self.msg_queue = []
         self.subscribers = {}
@@ -75,6 +76,7 @@ def main():
     vani.subscribe("movie")
     vani.unsubscribe("movie")
 
+    # 3. 相比观察者, 这里需要通过特定的函数告知subscriber(被动方), 而观察者则立刻监听到所有改动(主动方)
     fftv.publish("cartoon")
     fftv.publish("music")
     fftv.publish("ads")
