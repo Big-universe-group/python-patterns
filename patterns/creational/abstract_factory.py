@@ -25,6 +25,14 @@ based on my own criteria, dogs over cats.
 
 *Where is the pattern used practically?
 
+创建型模式--抽象工厂(abstract factory)
+抽象工厂模式: 围绕一个超级工厂创建其他"一线工厂", 该超级工厂被称为其他"一线工厂"的工厂. 接口是一个
+    负责创建相关对象的"工厂", 无需显示的指定类. 每一个生成的"一线工厂"都按照"工厂模式"来提供真正需要的对象.
+
+使用场景: 系统产品里面有多于一个的产品镞, 例如参加聚会时的穿着(商务装, 时尚装), 利用OOP 思想来创建某一类
+    的产品.
+
+
 *References:
 https://sourcemaking.com/design_patterns/abstract_factory
 http://ginstrom.com/scribbles/2007/10/08/design-patterns-python-style/
