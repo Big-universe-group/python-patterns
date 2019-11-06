@@ -25,6 +25,18 @@ instance of a different class.
 In general, in Python this won't be necessary, but a second example showing
 this kind of arrangement is also included.
 
+
+创建型模式--建造者模式(builder pattern)
+建造者模式: 使用多个简单的对象一步步构建一个复杂的对象.
+意图: 将一个复杂的构建和其表示分离开来, 是的相同的构建过程可以创建不同的表示
+解决问题: 面临着"一个复杂对象"的创建工作, 其通常由各个部分的子对象用一定的算法构成.
+        由于需求的变化, 这个复杂对象的各个部分经常面临着剧烈的变化, 但是将它们组合在一起的算法却相对稳定
+
+应用场景: 肯德基套餐是不变的, 但是里面的汉堡, 薯条等成分一直在变; Java的 StringBuilder.
+
+和工厂模式区别: 建造者模式更加关注与零件装配的顺序
+
+
 *Where is the pattern used practically?
 
 *References:
@@ -37,6 +49,7 @@ Decouples the creation of a complex object and its representation.
 
 # Abstract Building
 class Building(object):
+    """ 构建者父类: 维持两个基本的构建过程(build_floor, build_size) """
     def __init__(self):
         self.build_floor()
         self.build_size()
@@ -53,6 +66,7 @@ class Building(object):
 
 # Concrete Buildings
 class House(Building):
+    """ 普通意义房子, 别墅 """
     def build_floor(self):
         self.floor = 'One'
 
@@ -61,6 +75,7 @@ class House(Building):
 
 
 class Flat(Building):
+    """ 套间; 住宅房子; 平面 """
     def build_floor(self):
         self.floor = 'More than One'
 
@@ -75,6 +90,7 @@ class Flat(Building):
 
 
 class ComplexBuilding(object):
+    """ 另外一个构建方式, 没有在初始化的是就开始进行构建 """
     def __repr__(self):
         return 'Floor: {0.floor} | Size: {0.size}'.format(self)
 
@@ -88,6 +104,7 @@ class ComplexHouse(ComplexBuilding):
 
 
 def construct_building(cls):
+    # 所有对象构建流程都是一样的: build_floor + build_size
     building = cls()
     building.build_floor()
     building.build_size()
@@ -96,11 +113,13 @@ def construct_building(cls):
 
 # Client
 if __name__ == "__main__":
+    # 方式 1: 在初始化的时候就完成构建
     house = House()
     print(house)
     flat = Flat()
     print(flat)
 
+    # 方式 2: 通过调用来进行构建工作
     # Using an external constructor function:
     complex_house = construct_building(ComplexHouse)
     print(complex_house)

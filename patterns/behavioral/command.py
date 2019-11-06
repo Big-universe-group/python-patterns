@@ -29,6 +29,31 @@ Django HttpRequest (without `execute` method):
 
 from __future__ import print_function
 import os
+import shutil
+
+
+class CopyFileCommand(object):
+    """功能: 拷贝文件
+    """
+    def __init__(self, src, dest):
+        self.src = src
+        self.dest = dest
+
+    def execute(self):
+        """ 执行 """
+        self.copy(self.src, self.dest)
+
+    def undo(self):
+        """ 撤销 """
+        self.remove(self.dest)
+
+    def copy(self, src, dest):
+        print(u"copy %s to %s" % (src, dest))
+        shutil.copyfile(src, dest)
+
+    def remove(self, dest):
+        print("remove {}".format(dest))
+        os.remove(dest)
 
 
 class MoveFileCommand(object):
@@ -61,6 +86,7 @@ def main():
     >>> command_stack = [
     ...     MoveFileCommand('foo.txt', 'bar.txt'),
     ...     MoveFileCommand('bar.txt', 'baz.txt')
+    ...     CopyFileCommand('bar.txt', 'baz2.txt')
     ... ]
 
     # Verify that none of the target files exist
@@ -76,12 +102,14 @@ def main():
     ...     cmd.execute()
     renaming foo.txt to bar.txt
     renaming bar.txt to baz.txt
+    copy bar.txt to baz2.txt
 
     # And can also be undone at will
     >>> for cmd in reversed(command_stack):
     ...     cmd.undo()
     renaming baz.txt to bar.txt
     renaming bar.txt to foo.txt
+    remove bar2.txt
 
     >>> os.unlink("foo.txt")
     """

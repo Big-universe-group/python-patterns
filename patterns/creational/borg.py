@@ -29,6 +29,19 @@ instance from a subclass.
 Notice that even though they share attributes, the instances are not
 the same, as seen by their ids.
 
+
+创建型模式--Borg模式
+Borg模式: 利用python实现单例的一种方式.
+Borg: 一个邪恶种族，所有的 Borg 成员，都随时听从一个中央命令机构，叫做 Collective (集体).
+        这个集体, 随时能够和任何一个 Borg 成员通信， 在 Borg 成员里共享一切信息.
+
+原理: 对于python的一个类而言, self.__dict__是可以重新绑定的. 如果我们在__init__方法中重新绑定一个新的字典,
+        那么所有的对象就拥有"we are one"的性质
+
+与单例模式区别: 单例模式关注的是对象的一致性, 即在单例模式中永远放回同一个对象. Borg模式和单例模式都支持
+        状态的一致性. 在GC 方面单例模式的性能优于 Brog模式.
+
+
 *Where is the pattern used practically?
 Sharing state is useful in applications like managing database connections:
 https://github.com/onetwopunch/pythonDbTemplate/blob/master/database.py
@@ -42,11 +55,11 @@ Provides singleton-like behavior sharing state between instances.
 
 
 class Borg(object):
-    __shared_state = {}
+    __shared_state = {}  # 所有成员共享
 
     def __init__(self):
         self.__dict__ = self.__shared_state
-        self.state = 'Init'
+        self.state = 'Init'  # __dict__实际包含self.state属性
 
     def __str__(self):
         return self.state

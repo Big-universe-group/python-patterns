@@ -41,6 +41,7 @@ def saver():
 
 
 def template_function(getter, converter=False, to_save=False):
+    """ 公共模板函数 """
     data = getter()
     print("Got `{}`".format(data))
 

@@ -45,17 +45,17 @@ import random
 
 
 class PetShop(object):
-
-    """A pet shop"""
+    """A pet shop
+    抽象工厂: 宠物商店, 出售多种类的宠物对象(每一个种类有多个对象)
+    """
 
     def __init__(self, animal_factory=None):
         """pet_factory is our abstract factory.  We can set it at will."""
-
+        # 指定需要创建的宠物种类
         self.pet_factory = animal_factory
 
     def show_pet(self):
-        """Creates and shows a pet using the abstract factory"""
-
+        """Creates and shows a pet using the abstract factory: 相当于创建宠物对象"""
         pet = self.pet_factory()
         print("We have a lovely {}".format(pet))
         print("It says {}".format(pet.speak()))
@@ -87,10 +87,9 @@ def random_animal():
 
 # Show pets with various factories
 if __name__ == "__main__":
-
     # A Shop that sells only cats
-    cat_shop = PetShop(Cat)
-    cat_shop.show_pet()
+    cat_shop = PetShop(Cat)  # 宠物抽象工厂, 接收某一类宠物并批量创建此类宠物对象
+    cat_shop.show_pet()  # 返回宠物对象
     print("")
 
     # A shop that sells random animals
@@ -98,6 +97,7 @@ if __name__ == "__main__":
     for i in range(3):
         shop.show_pet()
         print("=" * 20)
+
 
 ### OUTPUT ###
 # We have a lovely Cat
